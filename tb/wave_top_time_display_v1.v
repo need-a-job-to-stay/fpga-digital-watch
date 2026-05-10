@@ -1,4 +1,4 @@
-`timescale 1ns/1ps
+`timescale 1ns / 1ps
 module wave_top_time_display_v1;
   reg       clk = 0;
   reg [1:0] SW = 2'b00;

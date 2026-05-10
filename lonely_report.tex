@@ -16,7 +16,7 @@
 \usepackage{float}
 \usepackage{indentfirst}
 \usepackage{changepage}
-\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\usepackage{bookmark}
 
 \setlength{\parindent}{0pt}
 \begin{document}
@@ -53,117 +53,200 @@
     {\large \today \par}
 
 \end{titlepage}
-%=======================================================================
-%PAGE 1
-%=======================================================================
+
+\pagenumbering{roman}
+\tableofcontents
+\setcounter{tocdepth}{2}
+\newpage
+
+\pagenumbering{arabic}
+
+
 \section{Backup Strategy}
+%=======================================================================
+% 1
+%=======================================================================
+    This project uses Git for data backup and version control. The forked repository is stored in the personal account on GitHub.
+    The committed code is pushed to the remote repository after each module is completed and tested. This ensures that the latest version of the code is always backed up and can be easily accessed from any location.
 
-This project uses Git for data backup and version control. The forked repository is stored in the personal account on GitHub.
-The committed code is pushed to the remote repository after each module is completed and tested. This ensures that the latest version of the code is always backed up and can be easily accessed from any location.
-
-\section{Waveform Graph}
-
-\subsection{Seven-segment Display Decoder for Dexadecimal Digits} //module 6.1 p.17
-
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/seven_segment.jpg}
-    \caption{Waveform for \texttt{seven\_segment}.}
-\end{figure}
-
-\begin{adjustwidth}{2em}{0em}
-    Signal values are shown in hexadecimal. When blank is high, the output is 7f, which corresponds to 1111111 in binary — correct for an active-low display. The waveforms confirm the expected behaviour.
-\end{adjustwidth}
-%Module 6.2 p.18
-//module 6.2
-\subsection{Parametrised Up-Down Counter with Enable} //module 6.2 p.18
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/up_down_counter.png}
-    \caption{Waveform for \texttt{up\_down\_counter}.}
-\end{figure}
-
-\begin{adjustwidth}{2em}{0em}
-    Count values are shown in decimal. When enable is high, the counter starts to count. When up is high, the counter increments by one at every rising edge of the clock and goes down when up is low. The testbech sets MAX to 5, so the counter wraps around to 0 when it reaches 5 and wraps around to 5 when it goes down from 0. The waveforms confirm the expected behaviour.
-\end{adjustwidth}
-//module 6.3
-\subsection{Binary to Binary-Coded Decimal} //module 6.3 p.20
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/binary_to_bcd.png}
-    \caption{Waveform for \texttt{binary\_to\_bcd}.}
-\end{figure}
-
-\begin{adjustwidth}{2em}{0em}
-    The binary inputs are shown in hexadecimal. The output values for tens and ones correspond to the tens and ones digits of the binary input in BCD format immediately. For example, when the binary input is 0a, which corresponds to 10 in decimal, tens changes to 1 and ones changes to 0 at the same instance. So,the waveforms confirm the expected behaviour.
-\end{adjustwidth}
-\subsection{Cascaded Hour-Minute-Second Counter with Enable} //module 6.4 p.20
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/hms_counter.png}
-    \caption{Waveform for \texttt{hms\_counter}.}
-\end{figure}
-
-\begin{adjustwidth}{2em}{0em}
     
-\end{adjustwidth}
-\subsection{Template} //module X.Y p.Z
+\section{Time Display}
+%=======================================================================
+% 222222222222222222222222222222222222222222222
+%=======================================================================
+\subsection{Seven-segment Display Decoder for Dexadecimal Digits} %module 6.1 p.17
+
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/seven_segment.jpg}
+        \caption{Waveform for \texttt{seven\_segment}.}
+    \end{figure}
+
+    \begin{adjustwidth}{2em}{0em}
+        Signal values are shown in hexadecimal. 
+        When \texttt{blank} is high, the output is 7f, which corresponds 
+        to 1111111 in binary — correct for an active-low display. 
+        The waveforms confirm the expected behaviour.
+    \end{adjustwidth}
+\subsection{Parametrised Up-Down Counter with Enable} %module 6.2 p.18
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/up_down_counter.png}
+        \caption{Waveform for \texttt{up\_down\_counter}.}
+    \end{figure}
+
+    \begin{adjustwidth}{2em}{0em}
+        Count values are shown in decimal. 
+        When enable is high, the counter starts to count. 
+        When \texttt{up} is high, the counter increments by one at every 
+        rising edge of the clock and goes down when \texttt{up} is low. 
+        The testbech sets \texttt{MAX} to 5, so the counter wraps around to 0 
+        when it reaches 5 and wraps around to 5 when it goes down from 0. 
+        The waveforms confirm the expected behaviour.
+    \end{adjustwidth}
+\subsection{Binary to Binary-Coded Decimal} %module 6.3 p.20 
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/binary_to_bcd.png}
+        \caption{Waveform for \texttt{binary\_to\_bcd}.}
+    \end{figure}
+
+    \begin{adjustwidth}{2em}{0em}
+         The binary inputs are shown in hexadecimal. 
+         The output values for \texttt{tens} and \texttt{ones} change to the
+         corresponding digits of \texttt{bin} in BCD format immediately. 
+         For example, when \texttt{bin} is \texttt{0a}, which corresponds 
+         to 10 in decimal, \texttt{tens} changes to 1 
+         and \texttt{ones} changes to 0 at the same instance. 
+         So, the waveforms confirm the expected behaviour.
+    \end{adjustwidth}
+\subsection{Cascaded Hour-Minute-Second Counter with Enable} %module 6.4 p.20
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/hms_counter1.png}
+        \includegraphics[width=0.9\linewidth]{figures/hms_counter2.png}
+        \caption{Waveform for \texttt{hms\_counter}.}
+    \end{figure}
+
+    \begin{adjustwidth}{2em}{0em}
+        The signals are shown in decimal. In the testbench setting for parameters, every day has 3 hours, each hour has 4 minutes and each minute has 5 seconds.\\
+         When \texttt{enable} is high, the seconds counter starts to count.
+         When \texttt{seconds} reaches 5, it wraps around to 0 and \texttt{minutes} increments by one. 
+         When \texttt{minutes} reaches 4, it wraps around to 0 and \texttt{hours} increments by one. 
+         When \texttt{hours} reaches 3, it wraps around back to 0. 
+         The waveforms confirm the expected behaviour.
+    \end{adjustwidth}
+\subsection{Modulo N Counter} %module 6.5 p.22
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/mod_n_counter.png}
+        \caption{Waveform for \texttt{mod\_n\_counter}.}
+    \end{figure}
+
+    \begin{adjustwidth}{2em}{0em}
+         The \texttt{count} values are shown in decimal.
+         When \texttt{enable} is high, the counter starts to count at every rising edge of the clock. 
+         The testbench sets N to 5, so the counter wraps around to 0 when it reaches 4. 
+         When both \texttt{rst} and \texttt{clk} are high, the counter is reset to 0. 
+         The waveforms confirm the expected behaviour.
+    \end{adjustwidth}
+\subsection{Restartable Rate Generator} %module 6.6 p.23
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/restartable_rate_generator.png}
+        \caption{Waveform for \texttt{restartable\_rate\_generator}.}
+    \end{figure}
+
+    \begin{adjustwidth}{2em}{0em}
+        Addition waveforms for \texttt{count} and \texttt{rst\_count} are shown for better understanding.\\
+        The count values are shown in decimal. 
+        When \texttt{enable} is high, the counter starts to count at every rising edge of the clock.
+        The testbench sets \texttt{N} to 5, so the counter wraps around to 0 when it reaches 3.
+        The \texttt{tick} is high when the counter reaches 3. When \texttt{tick} is high.
+        The counter is reset to 0 at the next rising edge of the clock when both 
+        \texttt{rst} and \texttt{clk} are high, or when \texttt{tick} is high.
+        The waveforms confirm the expected behaviour.
+    \end{adjustwidth}
+\subsection{Variable-Speed Time Display} %module 6.7 p.25
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/.png}
-    \caption{Waveform for \texttt{}.}
+    \includegraphics[width=0.9\linewidth]{figures/top_time_display_v11.png}
+    \includegraphics[width=0.9\linewidth]{figures/top_time_display_v12.png}
+    \includegraphics[width=0.9\linewidth]{figures/top_time_display_v13.png}
+    \caption{Waveform for \texttt{top\_time\_display\_v1}.}
 \end{figure}
 
 \begin{adjustwidth}{2em}{0em}
-    
-\end{adjustwidth}
-\subsection{Template} //module X.Y p.Z
+     Signal of \texttt{SW} is shown in decimal. 
+     Signals of\texttt{HEX}s are shown in hexadecimal.
+     Those values in binary are the corresponding \texttt{ACTIVE\_LOW} seven-segment
+      display codes.
+     For example, 40 represents binary \texttt{1000000}, corresponds to 0 on the display,
+      63 represents binary \texttt{1111001}, corresponds to 1 on the display,
+     and 10 represents binary \texttt{0010000}, corresponds to 9 on the display.\\
+     The time span for \texttt{SW = 2'b00} is not long enough to
+     increment the \texttt{seconds} by 1Hz, so \texttt{seconds} remains at 0. 
+     When \texttt{SW = 2'b11}, \texttt{HEX}s increment in 50MHz, which is the 
+     same speed as \texttt{clk}.\\
+     When \texttt{HEX0} reaches 10(9 in terms of display), it wraps around to 
+     40(0 in terms of display) and \texttt{HEX1} changes from 40 to 63.\\
+     So the waveforms confirm the expected behaviour.
+\end{adjustwidth}    
+
+
+\section{Settable Watch}
+%=======================================================================
+% 333333333333333333333333333333333333333333
+%=======================================================================
+\subsection{Fixed-frequency Fixed-duty PWM Generator} %module 7.1 p.28
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/.png}
-    \caption{Waveform for \texttt{}.}
+    \includegraphics[width=0.9\linewidth]{figures/top_time_display_v11.png}
+    \caption{Waveform for \texttt{top\_time\_display\_v1}.}
 \end{figure}
 
 \begin{adjustwidth}{2em}{0em}
-    
+     Signal of \texttt{SW} is shown in decimal.
+     So the waveforms confirm the expected behaviour.
 \end{adjustwidth}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/.png}
-    \caption{Waveform for \texttt{}.}
-\end{figure}
-
-\begin{adjustwidth}{2em}{0em}
-    
-\end{adjustwidth}
-\subsection{Template} //module X.Y p.Z
+\subsection{Variable-Speed Time Display} %module 6.7 p.25
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/.png}
-    \caption{Waveform for \texttt{}.}
+    \includegraphics[width=0.9\linewidth]{figures/top_time_display_v11.png}
+    \caption{Waveform for \texttt{top\_time\_display\_v1}.}
 \end{figure}
 
 \begin{adjustwidth}{2em}{0em}
-    
+     Signal of \texttt{SW} is shown in decimal.
+     So the waveforms confirm the expected behaviour.
 \end{adjustwidth}
 
+
+\section{Stopwatch and Timer}
+%=======================================================================
+% 44444444444444444444444444
+%=======================================================================
+
+\section{Explanation}
 %=======================================================================
 %Explanation
 %=======================================================================   
-\section{Explanation}
 \begin{enumerate}
 
     \item Explain why Verilator accepts \texttt{if (blank)} but not \texttt{if (ACTIVE\_LOW)}.
 
     \item Explain what binary-coded decimal (BCD) is. You may need to research it.
 
-    \item Third item
+    \item Explain how \texttt{localparam CounterWidth = \$clog2(CYCLE\_COUNT);} works.
 
     \item Fourth item
 \end{enumerate}

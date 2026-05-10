@@ -6,3 +6,14 @@ a.out
 *.xml
 .venv
 sby/*/
+/figures/
+/*.pdf
+*.aux
+*.log
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.toc
+*.out
+*.synctex*.gz
+*.log
