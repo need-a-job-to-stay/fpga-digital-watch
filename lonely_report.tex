@@ -37,17 +37,7 @@
             1550486 & Selina Cheng \\
         \end{tabular}}
 
-    \begin{center}
 
-        \vspace{1cm}
-
-        \textbf{Acknowledgement}
-
-        \vspace{0.3cm}
-
-        The author would like to acknowledge Anita Cheng for her contribution and support during the development of this project.
-    \end{center}
-    \vspace{6cm}
 
     {\large University of Melbourne \par}
     {\large \today \par}
@@ -175,15 +165,15 @@
     \end{adjustwidth}
 \subsection{Variable-Speed Time Display} %module 6.7 p.25
 
-\begin{figure}[H]
+    \begin{figure}[H]
     \centering
     \includegraphics[width=0.9\linewidth]{figures/top_time_display_v11.png}
     \includegraphics[width=0.9\linewidth]{figures/top_time_display_v12.png}
     \includegraphics[width=0.9\linewidth]{figures/top_time_display_v13.png}
     \caption{Waveform for \texttt{top\_time\_display\_v1}.}
-\end{figure}
+    \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
+    \begin{adjustwidth}{2em}{0em}
      Signal of \texttt{SW} is shown in decimal. 
      Signals of\texttt{HEX}s are shown in hexadecimal.
      Those values in binary are the corresponding \texttt{ACTIVE\_LOW} seven-segment
@@ -198,7 +188,7 @@
      When \texttt{HEX0} reaches 10(9 in terms of display), it wraps around to 
      40(0 in terms of display) and \texttt{HEX1} changes from 40 to 63.\\
      So the waveforms confirm the expected behaviour.
-\end{adjustwidth}    
+    \end{adjustwidth}    
 
 
 \section{Settable Watch}
@@ -207,29 +197,75 @@
 %=======================================================================
 \subsection{Fixed-frequency Fixed-duty PWM Generator} %module 7.1 p.28
 
-\begin{figure}[H]
+    \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\linewidth]{figures/top_time_display_v11.png}
-    \caption{Waveform for \texttt{top\_time\_display\_v1}.}
-\end{figure}
+    \includegraphics[width=0.9\linewidth]{figures/pwm_generator.png}
+    \caption{Waveform for \texttt{pwm\_generator}.}
+    \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-     Signal of \texttt{SW} is shown in decimal.
+    \begin{adjustwidth}{2em}{0em}
+     Testbench sets \testtt{pwm_out} to be high for 8 cycles and low for 
+     2 cycles. The signal of \texttt{pwm\_out} confirms the expected behaviour,
+     and resets the cycle when \texttt{rst} is high.
      So the waveforms confirm the expected behaviour.
-\end{adjustwidth}
-\subsection{Variable-Speed Time Display} %module 6.7 p.25
+    \end{adjustwidth}
+    Report 7
+    Explain why this module is called a PWM generator
+    Report 8
+    In mod_n_counter, rst takes priority over enable. Comment on the benefit of this
+    design choice
+\subsection{Rising-edge Detector} %module 7.2 p.28
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.9\linewidth]{figures/top_time_display_v11.png}
-    \caption{Waveform for \texttt{top\_time\_display\_v1}.}
-\end{figure}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/rising_edge_detector.png}
+        \caption{Waveform for \texttt{rising\_edge\_detector}.}
+    \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-     Signal of \texttt{SW} is shown in decimal.
+    \begin{adjustwidth}{2em}{0em}
+        \texttt{rise} is up immediately after t\texttt{sig_in} transition from low to high.
+        When \texttt{sig_in} remains high, \texttt{rise} goes back to low at the next rising edge of the clock.
+        So the waveforms confirm the expected behaviour.
+    \end{adjustwidth}
+\subsection{Button Hold Detect} %module 7.3 p.28
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/button_hold_detect.png}
+        \caption{Waveform for \texttt{button\_hold\_detect}.}
+    \end{figure}
+
+    \begin{adjustwidth}{2em}{0em}
+         Testbench sets \testtt{HOLD_CYCLES} to be 3.
+         \texttt{held} is high for one cycle after \texttt{button} remains high for 3 cycle,
+          and goes back to low if \texttt{button} remains high.
+         So the waveforms confirm the expected behaviour.
+    \end{adjustwidth}
+
+    Report 9
+    Explain why the next-state logic may depend on the output held without violating
+    the Moore FSM constraint.
+\subsection{Button Hold Pulse} %module 7.4 p.30
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/button_hold_pulse.png}
+        \caption{Waveform for \texttt{button\_hold\_pulse}.}
+    \end{figure}
+
+    \begin{adjustwidth}{2em}{0em}
+     Testbench sets \testtt{HOLD_CYCLES} to be 3.
+     \texttt{held} is high for one cycle after \texttt{button} remains high for 3 cycle,
+      and goes back to low if \texttt{button} remains high.
      So the waveforms confirm the expected behaviour.
-\end{adjustwidth}
+    \end{adjustwidth}
 
+    Report 10
+    Explain what this module does. Justify your explanation by referring to the
+    generated waveforms, being precise about timing.
+    Report 11
+    Explain how button_hold_pulse is a Moore FSM despite rising_edge_detector being
+    Mealy.
 
 \section{Stopwatch and Timer}
 %=======================================================================
