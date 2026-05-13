@@ -178,6 +178,15 @@ Explain how \texttt{localparam CounterWidth = \$clog2(CYCLE\_COUNT);} works.
 	\texttt{\$clog2} calculates the ceiling of the logarithm base 2 of a given value. It returns the smallest integer that is greater than or equal to the logarithm base 2 of the input value.\\
     In this case, \texttt{CounterWidth} is the minimum number of bits required to represent the value of \texttt{CYCLE\_COUNT}.
 \end{adjustwidth}
+\\
+\textbf{Report 6}
+In addition to running the provided testbench, write your own testbench verifying
+correct behaviour when CYCLE_COUNT = 1.
+\begin{adjustwidth}{2em}{0em}
+	
+\end{adjustwidth}
+Report 6
+
 \subsection{Variable-Speed Time Display} %module 6.7 p.25
 
 \begin{figure}[H]
@@ -222,7 +231,7 @@ Explain how \texttt{localparam CounterWidth = \$clog2(CYCLE\_COUNT);} works.
 \textbf{Report 7}
 Explain why this module is called a PWM generator
 \begin{adjustwidth}{2em}{0em}
-	
+	This module is called a PWM generator because it produces a Pulse Width Modulated (PWM) signal at pwm_out. A PWM signal is a repeating digital waveform which has period staying fixed and HIGH time corresponding to controled duty cycle. This module performs this behavior by implementing a modulor counter.
 \end{adjustwidth}
 \\
 \textbf{Report 8}
