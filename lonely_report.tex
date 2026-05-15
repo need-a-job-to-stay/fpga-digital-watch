@@ -17,6 +17,43 @@
 \usepackage{indentfirst}
 \usepackage{changepage}
 \usepackage{bookmark}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+
+\definecolor{codeblue}{RGB}{0,0,180}
+\definecolor{codegreen}{RGB}{0,120,0}
+\definecolor{codegray}{RGB}{245,245,245}
+\newtcolorbox{reportbox}[1]{
+	colback=gray!15,
+	colframe=blue!10!black,
+	boxrule=1pt,
+	arc=2mm,
+	title=\textbf{#1},
+	fonttitle=\bfseries\color{white},
+	colbacktitle=blue!40!black
+}
+
+
+\let\oldtexttt\texttt
+\renewcommand{\texttt}[1]{{\fontsize{11pt}{12pt}\selectfont\oldtexttt{#1}}}
+
+\lstdefinestyle{verilogstyle}{
+    basicstyle=\ttfamily\fontsize{10pt}{12pt}\selectfont,
+    keywordstyle=\color{codeblue}\bfseries,
+    commentstyle=\color{codegreen},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    numbersep=8pt,
+    xleftmargin=3em,
+    breaklines=true,
+    tabsize=2,
+    showstringspaces=false
+}
+
+
+\lstset{style=verilogstyle}
 
 \setlength{\parindent}{0pt}
 \begin{document}
@@ -73,20 +110,20 @@ The committed code is pushed to the remote repository after each module is compl
 	\caption{Waveform for \texttt{seven\_segment}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
 	Signal values are shown in hexadecimal.\\
 	When \texttt{blank} is high, the output is 7f, which corresponds to 1111111 in binary — correct for an active-low display. The waveforms confirm the expected behaviour.
-\end{adjustwidth}
-\\
-\textbf{Report 1}
+	\\
+	\\
+
+\begin{reportbox}{Report 1}
 Explain why Verilator accepts \texttt{if (blank)} but not \texttt{if (ACTIVE\_LOW)}.
-\begin{adjustwidth}{2em}{0em}
-	\texttt{ACTIVE\_LOW} is a parameter, which will be known only at compile
-	time and does not change during the runtime. Verilator will constant-fold \texttt{if (ACTIVE\_LOW)} in compilation.\\
-    \texttt{if (blank)} is a conditional statement that depends on the value of \texttt{blank} at runtime, which can change during the execution of the program. So Verilator can treat is as a normal combinational logic.\\
-    \\
-    The reason Verilator may reject or warn about \texttt{if (ACTIVE\_LOW)} is usually because it expects a generate-time construct instead, or the branch becomes dead code, or the coding style implies hardware selection but the condition is constant.
-\end{adjustwidth}
+\end{reportbox}
+
+\texttt{ACTIVE\_LOW} is a parameter, which will be known only at compile time and does not change during the runtime. Verilator will constant-fold \texttt{if (ACTIVE\_LOW)} in compilation.\\
+\\
+\texttt{if (blank)} is a conditional statement that depends on the value of \texttt{blank} at runtime, which can change during the execution of the program. So Verilator can treat it as a normal combinational logic.\\
+\\
+The reason Verilator may reject or warn about \texttt{if (ACTIVE\_LOW)} is usually because it expects a generate-time construct instead, or the branch becomes dead code, or the coding style implies hardware selection but the condition is constant.
 \subsection{Parametrised Up-Down Counter with Enable} %module 6.2 p.18
 
 \begin{figure}[H]
@@ -95,19 +132,17 @@ Explain why Verilator accepts \texttt{if (blank)} but not \texttt{if (ACTIVE\_LO
 	\caption{Waveform for \texttt{up\_down\_counter}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	Count values are shown in decimal.\\
 	When enable is high, the counter starts to count.
 	When \texttt{up} is high, the counter increments by one at every rising edge of the clock and goes down when \texttt{up} is low.\\
 	The testbech sets \texttt{MAX} to 5, so the counter wraps around to 0 when it reaches 5 and wraps around to 5 when it goes down from 0.
-	The waveforms confirm the expected behaviour.
-\end{adjustwidth}
-\\
-\textbf{Report 4}
+	The waveforms confirm the expected behaviour.\\
+
+
+\begin{reportbox}{Report 4}
 Explain what binary-coded decimal (BCD) is. You may need to research it.
-\begin{adjustwidth}{2em}{0em}
+\end{reportbox}
+
 	Binary-coded decimal (BCD) is a way of representing decimal digits individually using binary. Each decimal digit is seperately represented by 4 bits in binary instead of showing full value in a long binary number.
-\end{adjustwidth}
 \subsection{Binary to Binary-Coded Decimal} %module 6.3 p.20 
 
 \begin{figure}[H]
@@ -116,11 +151,9 @@ Explain what binary-coded decimal (BCD) is. You may need to research it.
 	\caption{Waveform for \texttt{binary\_to\_bcd}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	The binary inputs are shown in hexadecimal.\\
-	The output values for \texttt{tens} and \texttt{ones} change to the corresponding digits of \texttt{bin} in BCD format immediately.
-	For example, when \texttt{bin} is \texttt{0a}, which corresponds to 10 in decimal, \texttt{tens} changes to 1 and \texttt{ones} changes to 0 at the same instance. So, the waveforms confirm the expected behaviour.
-\end{adjustwidth}
+	The binary inputs are shown in hexadecimal. The output values for \texttt{tens} and \texttt{ones} change to the corresponding digits of \texttt{bin} in BCD format immediately.\\
+	\\
+	For example, when \texttt{bin} is \texttt{0a}, which corresponds to 10 in decimal, \texttt{tens} changes to 1 and \texttt{ones} changes to 0 at the same instance.
 \subsection{Cascaded Hour-Minute-Second Counter with Enable} %module 6.4 p.20
 
 \begin{figure}[H]
@@ -130,14 +163,9 @@ Explain what binary-coded decimal (BCD) is. You may need to research it.
 	\caption{Waveform for \texttt{hms\_counter}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	The signals are shown in decimal. In the testbench setting for parameters, every day has 3 hours, each hour has 4 minutes and each minute has 5 seconds.\\
-	When \texttt{enable} is high, the seconds counter starts to count.
-	When \texttt{seconds} reaches 5, it wraps around to 0 and \texttt{minutes} increments by one.
-	When \texttt{minutes} reaches 4, it wraps around to 0 and \texttt{hours} increments by one.
-	When \texttt{hours} reaches 3, it wraps around back to 0.
-	The waveforms confirm the expected behaviour.
-\end{adjustwidth}
+	In the testbench setting for parameters, every day has 3 hours, each hour has 4 minutes and each minute has 5 seconds.\\
+	\\
+	When \texttt{enable} is high, the seconds counter starts to count. When \texttt{seconds} reaches 5, it wraps around to 0 and \texttt{minutes} increments by one. When \texttt{minutes} reaches 4, it wraps around to 0 and \texttt{hours} increments by one. When \texttt{hours} reaches 3, it wraps around back to 0.
 \subsection{Modulo N Counter} %module 6.5 p.22
 
 \begin{figure}[H]
@@ -146,13 +174,8 @@ Explain what binary-coded decimal (BCD) is. You may need to research it.
 	\caption{Waveform for \texttt{mod\_n\_counter}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	The \texttt{count} values are shown in decimal.\\
 	When \texttt{enable} is high, the counter starts to count at every rising edge of the clock.
-	The testbench sets N to 5, so the counter wraps around to 0 when it reaches 4.
-	When both \texttt{rst} and \texttt{clk} are high, the counter is reset to 0.
-	The waveforms confirm the expected behaviour.
-\end{adjustwidth}
+	The testbench sets N to 5, so the counter wraps around to 0 when it reaches 4. When both \texttt{rst} and \texttt{clk} are high, the counter is reset to 0.
 \subsection{Restartable Rate Generator} %module 6.6 p.23
 
 \begin{figure}[H]
@@ -161,32 +184,70 @@ Explain what binary-coded decimal (BCD) is. You may need to research it.
 	\caption{Waveform for \texttt{restartable\_rate\_generator}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
 	Addition waveforms for \texttt{count} and \texttt{rst\_count} are shown for better understanding.\\
-	The count values are shown in decimal.
+\\
 	When \texttt{enable} is high, the counter starts to count at every rising edge of the clock.
-	The testbench sets \texttt{N} to 5, so the counter wraps around to 0 when it reaches 3.
-	The \texttt{tick} is high when the counter reaches 3. When \texttt{tick} is high.
-	The counter is reset to 0 at the next rising edge of the clock when both
-	\texttt{rst} and \texttt{clk} are high, or when \texttt{tick} is high.
-	The waveforms confirm the expected behaviour.
-\end{adjustwidth}
-\\
-\textbf{Report 5}
-Explain how \texttt{localparam CounterWidth = \$clog2(CYCLE\_COUNT);} works.
-\begin{adjustwidth}{2em}{0em}
-	\texttt{\$clog2} calculates the ceiling of the logarithm base 2 of a given value. It returns the smallest integer that is greater than or equal to the logarithm base 2 of the input value.\\
-    In this case, \texttt{CounterWidth} is the minimum number of bits required to represent the value of \texttt{CYCLE\_COUNT}.
-\end{adjustwidth}
-\\
-\textbf{Report 6}
-In addition to running the provided testbench, write your own testbench verifying
-correct behaviour when CYCLE_COUNT = 1.
-\begin{adjustwidth}{2em}{0em}
-	
-\end{adjustwidth}
-Report 6
+	The testbench sets \texttt{N} to 5, so the counter wraps around to 0 when it reaches 3. The \texttt{tick} is high when the counter reaches 3. When \texttt{tick} is high.\\
+	\\
+	The counter is reset to 0 at the next rising edge of the clock when both \texttt{rst} and \texttt{clk} are high, or when \texttt{tick} is high.\\
+	\\
 
+\begin{reportbox}{Report 5}
+Explain how \texttt{localparam CounterWidth = \$clog2(CYCLE\_COUNT);} works.
+\end{reportbox}
+	\texttt{\$clog2} calculates the ceiling of the logarithm base 2 of a given value. It returns the smallest integer that is greater than or equal to the logarithm base 2 of the input value.\\
+	\\
+    In this case, \texttt{CounterWidth} is the minimum number of bits required to represent the value of \texttt{CYCLE\_COUNT}.\\
+
+
+\begin{reportbox}{Report 6}
+In addition to running the provided testbench, write your own testbench verifying correct behaviour when \texttt{CYCLE\_COUNT = 1}.
+\end{reportbox}
+
+	\texttt{ACTIVE\_LOW} is a parameter, which will be known only at compile time and does not change during the runtime. Verilator will constant-fold \texttt{if (ACTIVE\_LOW)} in compilation.\\
+    \texttt{if (blank)} is a conditional statement that depends on the value of \texttt{blank} at runtime, which can change during the execution of the program. So Verilator can treat it as a normal combinational logic.\\
+    \\
+    The reason Verilator may reject or warn about \texttt{if (ACTIVE\_LOW)} is usually because it expects a generate-time construct instead, or the branch becomes dead code, or the coding style implies hardware selection but the condition is constant.
+
+
+	\begin{lstlisting}[language=Verilog]
+		`timescale 1ns / 1ps
+		module wave_restartable_rate_generator_1cycle;
+  		reg  clk = 0;
+  		reg  run = 0;
+  		wire tick;
+
+  		restartable_rate_generator #(.CYCLE_COUNT(1)
+		) dut (.clk (clk), .run (run), .tick(tick));
+
+  		always #5 clk = ~clk;
+
+  		initial begin
+    		$dumpfile("wave_restartable_rate_generator.vcd");
+    		$dumpvars(0, wave_restartable_rate_generator);
+
+    		#30;
+    		run = 1;
+    		#130;
+
+    		run = 0;
+   			#30;
+    		run = 1;
+    		#90;
+
+    		run = 0;
+    		#20 $finish;
+  		end
+		endmodule
+	\end{lstlisting}
+
+	It generates waveform in figure 7. \texttt{tick} follows \texttt{run} at a new rising edge of \texttt{clk}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/restartable_rate_generator_1cycle.png}
+	\caption{Waveform for testbench with \texttt{CYCLE\_COUNT = 1}.}
+\end{figure}
 \subsection{Variable-Speed Time Display} %module 6.7 p.25
 
 \begin{figure}[H]
@@ -197,16 +258,14 @@ Report 6
 	\caption{Waveform for \texttt{top\_time\_display\_v1}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	Signal of \texttt{SW} is shown in decimal. Signals of\texttt{HEX}s are shown in hexadecimal. Those values in binary are the corresponding \texttt{ACTIVE\_LOW} seven-segment display codes.\\
+	Signal of \texttt{SW} is shown in decimal. Signals of \texttt{HEX}s are shown in hexadecimal. Those values in binary are the corresponding \texttt{ACTIVE\_LOW} seven-segment display codes.\\
+	\\
 	For example, 40 represents binary \texttt{1000000}, corresponds to 0 on the display, 63 represents binary \texttt{1111001}, corresponds to 1 on the display, and 10 represents binary \texttt{0010000}, corresponds to 9 on the display.\\
+	\\
 	The time span for \texttt{SW = 2'b00} is not long enough to increment the \texttt{seconds} by 1Hz, so \texttt{seconds} remains at 0.
-	When \texttt{SW = 2'b11}, \texttt{HEX}s increment in 50MHz, which is the
-	same speed as \texttt{clk}.\\
-	When \texttt{HEX0} reaches 10(9 in terms of display), it wraps around to
-	40(0 in terms of display) and \texttt{HEX1} changes from 40 to 63.\\
-	So the waveforms confirm the expected behaviour.
-\end{adjustwidth}
+	When \texttt{SW = 2'b11}, \texttt{HEX}s increment in 50MHz, which is the same speed as \texttt{clk}.\\
+	\\
+	When \texttt{HEX0} reaches 10 (9 in terms of display), it wraps around to 40(0 in terms of display) and \texttt{HEX1} changes from 40 to 63.\\
 
 
 \section{Settable Watch}
@@ -221,25 +280,20 @@ Report 6
 	\caption{Waveform for \texttt{pwm\_generator}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	Testbench sets \testtt{pwm_out} to be high for 8 cycles and low for
-	2 cycles. The signal of \texttt{pwm\_out} confirms the expected behaviour,
-	and resets the cycle when \texttt{rst} is high.
-	So the waveforms confirm the expected behaviour.
-\end{adjustwidth}
-\\
-\textbf{Report 7}
+	Testbench sets \texttt{pwm\_out} to be high for 8 cycles and low for
+	2 cycles. The signal of \texttt{pwm\_out} confirms the expected behaviour, and resets the cycle when \texttt{rst} is high.
+
+\begin{reportbox}{Report 7}
 Explain why this module is called a PWM generator
-\begin{adjustwidth}{2em}{0em}
-	This module is called a PWM generator because it produces a Pulse Width Modulated (PWM) signal at pwm_out. A PWM signal is a repeating digital waveform which has period staying fixed and HIGH time corresponding to controled duty cycle. This module performs this behavior by implementing a modulor counter.
-\end{adjustwidth}
-\\
-\textbf{Report 8}
-In mod_n_counter, rst takes priority over enable. Comment on the benefit of this
-design choice
-\begin{adjustwidth}{2em}{0em}
-	
-\end{adjustwidth}
+\end{reportbox}
+	This module is called a PWM generator because it produces a Pulse Width Modulated (PWM) signal at \texttt{pwm\_out}. PWM signal is a repeating digital waveform which has period staying fixed and HIGH time corresponding to duty cycle. This module performs this behavior by implementing a modulor counter.\\
+
+
+\begin{reportbox}{Report 8}
+In mod\_n\_counter, rst takes priority over enable. Comment on the benefit of this
+design choice.
+\end{reportbox}
+	This priority sequence insure that \texttt{rst} always immediately clean the old value regardless of the value of \texttt{enable}. If \texttt{enable} is given a higher priority, when \texttt{enable = 0}, \texttt{count} may stuck at oul value even though \texttt{rst} turns high.
 \subsection{Rising-edge Detector} %module 7.2 p.28
 
 \begin{figure}[H]
@@ -248,11 +302,7 @@ design choice
 	\caption{Waveform for \texttt{rising\_edge\_detector}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	\texttt{rise} is up immediately after t\texttt{sig_in} transition from low to high.
-	When \texttt{sig_in} remains high, \texttt{rise} goes back to low at the next rising edge of the clock.
-	So the waveforms confirm the expected behaviour.
-\end{adjustwidth}
+	\texttt{rise} is up immediately after t\texttt{sig\_in} transition from low to high. When \texttt{sig\_in} remains high, \texttt{rise} goes back to low at the next rising edge of the clock.
 \subsection{Button Hold Detect} %module 7.3 p.28
 
 \begin{figure}[H]
@@ -261,16 +311,14 @@ design choice
 	\caption{Waveform for \texttt{button\_hold\_detect}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	Testbench sets \testtt{HOLD_CYCLES} to be 3.
-	\texttt{held} is high for one cycle after \texttt{button} remains high for 3 cycle,
-	and goes back to low if \texttt{button} remains high.
-	So the waveforms confirm the expected behaviour.
-\end{adjustwidth}
+	Testbench sets \texttt{HOLD\_CYCLES} to be 3. In the generated graph, \texttt{held} is high for one cycle after \texttt{button} remains high for 3 cycle, and goes back to low if \texttt{button} remains high. So the waveforms confirm the expected behaviour.\\
 
-Report 9
+
+\begin{reportbox}{Report 9}
 Explain why the next-state logic may depend on the output held without violating
 the Moore FSM constraint.
+\end{reportbox}
+	The calculation of \texttt{held} only depends on \texttt{count}, which is the current state. This does not violate Moore FSM as the output only depends on current state and input.  
 \subsection{Button Hold Pulse} %module 7.4 p.30
 
 \begin{figure}[H]
@@ -279,20 +327,205 @@ the Moore FSM constraint.
 	\caption{Waveform for \texttt{button\_hold\_pulse}.}
 \end{figure}
 
-\begin{adjustwidth}{2em}{0em}
-	Testbench sets \testtt{HOLD_CYCLES} to be 3.
-	\texttt{held} is high for one cycle after \texttt{button} remains high for 3 cycle,
-	and goes back to low if \texttt{button} remains high.
-	So the waveforms confirm the expected behaviour.
-\end{adjustwidth}
+	Testbench sets \texttt{HOLD\_CYCLES} to be 3. \texttt{held} is high for only one cycle after \texttt{button} remains high for 3 cycle, and goes back to low if \texttt{button} remains high.
+	So the waveforms confirm the expected behaviour.\\
 
-Report 10
+
+\begin{reportbox}{Report 10}
 Explain what this module does. Justify your explanation by referring to the
 generated waveforms, being precise about timing.
-Report 11
-Explain how button_hold_pulse is a Moore FSM despite rising_edge_detector being
-Mealy.
+\end{reportbox}
+	 \texttt{pulse} rises high at the fifth complete cycle that a continuous high \texttt{button} encounter. It rises at the same time as the \texttt{clk} rises. \\
 
+
+\begin{reportbox}{Report 11}
+Explain how button\_hold\_pulse is a Moore FSM despite rising\_edge\_detector being
+Mealy.
+\end{reportbox}
+	The FSM classification only applies to the FSM itself, not necessarily every submodule inside the overall design. The output is a direct combinatinal logic of the input. Using a Mealy input signal does not mean the output is Mealy too. 
+\subsection{Button Auto Repeat} %module 7.5 p.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/button_auto_repeat.png}
+	\caption{Waveform for \texttt{button\_auto\_repeat}.}
+\end{figure}
+
+	Testbench sets \texttt{HOLD\_CYCLES = 8, REAPEAT\_CYCLES = 3}. When \texttt{button} is high, \texttt{pulse} goes high immediately until next cycle. At the 8th consecutive rising edges, \texttt{pulse} start to repeatly turning high for one cycle every three cycles.
+\subsection{Arming Latch} %module 7.6 p.32
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/arming_latch.png}
+	\caption{Waveform for \texttt{arming\_latch}.}
+\end{figure}
+
+	When {arm} is ever sampled high, \texttt{armed} begins to stay high continuously and backs to low when \texttt{disarm} is sampled high.  When \texttt{arm} and \texttt{disarm} are both sampled high, \texttt{armed} resets to zero because \texttt{disarm} takes higher priority..
+\subsection{Edit Mode Selector} %module 7.7 p.32
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/edit_mode_selector.png}
+	\caption{Waveform for \texttt{edit\_mode\_selector}.}
+\end{figure}
+
+	Testbench sets \texttt{HOLD\_CYCLES = 5}.\\
+	A long press of button longer than 5 cycles turns the system into edit mode, where \texttt{mode\_enable} changes from 0 to 1. In edit mode for seconds and minutes, every press changes the system to the next mode, in sequence of seconds, minutes, to hours. When the system is in the hour editting mode, a press will end the edit mode.\\\\
+
+
+\begin{reportbox}{Report 12}
+Include your block diagram and explain the combinational logic you used for \texttt{enable\_counter}, \texttt{reset\_counter}, and \texttt{disarm}.
+\end{reportbox}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/report_12.png}
+	\caption{block diagram of \texttt{edit\_mode\_selector}.}
+\end{figure}
+	
+
+	The counter only advance when it is armed and a normal button press occurs. Therefore:
+	\begin{lstlisting}[language=Verilog]
+		assign enable_counter = armed && press;
+	\end{lstlisting}
+	This ensures enable is low whenever \texttt{armed} is low, only one increment occurs per press.
+	\\
+	The counter reset whenever edit mode is exited:
+	\begin{lstlisting}[language=Verilog]
+		assign reset_counter = disarm | !armed;
+	\end{lstlisting}
+	This immediately clears the mode counter back to zero after edit mode finishes.
+	\\
+	The system disarm when button is pressed while already on the last mode \texttt{(count == 2)}. Since the counter is modulo-3, valid modes are 0, 1, and 2. Therefore:
+	\begin{lstlisting}[language=Verilog]
+		assign disarm = armed && press && (count == 2);
+	\end{lstlisting}
+\subsection{Editable Counter} %module 7.8 p.35
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/editable_counter.png}
+	\caption{Waveform for \texttt{editable\_counter}.}
+\end{figure}
+
+	Testbench sets {N = 3}. When \texttt{edit\_mode = 0}, counter advances by one at every tick and wraps around to 0 after reaching 3. Inside the edit mode, every cycle during \texttt{inc} is pressed increments \texttt{count} by one and \texttt{dec} does the opposite. When both \texttt{inc} and \texttt{dec} are pressed, they are ignored and the counter is unchanged.\\
+
+
+\begin{reportbox}{Report 13}
+Explain why \texttt{wire} was used instead of \texttt{logic} for the three event signals.
+\end{reportbox}
+	 These events are combinational logic only and do not store ports of submodule or any states. The valus are continuous assigned rather than variables that updated procedurally inside an \texttt{always\_comb} or \texttt{always\_ff} block. Therefore, using \texttt{wire} can show the intent clearly.
+\subsection{Key Synchroniser} %module 7.9 p.36
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/key_synchroniser.png}
+	\caption{Waveform for \texttt{key\_synchroniser}.}
+\end{figure}
+
+	The signal are in hexadeximal.\\ 
+	This module use two stage flip-flop, so the corresponding update to the change of input always happens two cycle after. In the first two cycle, \texttt{key\_sync} is 0 because it is initialised to 0. It begins to be the bitwise invertion of input on the 3th cycles.\\ 
+	\\
+	For example, \texttt{4'hf} is 1111 in binary. The biwise invertion of it is a binary 0000 and a hexadecimal 0.
+\subsection{Decimal Display Driver} %module 7.10 p.36
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/decimal_display_driver.png}
+	\caption{Waveform for \texttt{decimal\_display\_driver}.}
+\end{figure}
+
+	The signals are shown in hexadecimal.\\
+	The outputs of the displays are active-low 7-segment values, so the hexadecimal values correspond to the segment patterns. For example, \texttt{7'h40} corresponds to displaying digit 0 while \texttt{7'h79} corresponds to displaying digit 1.\\
+	\\
+	When \texttt{blank} becomes high, display output changes to \texttt{7'h7f}, which means all segments are OFF. For example, when \texttt{blank0} becomes 1 at around 100000 ps, \texttt{HEX0} changes from \texttt{7'h24} to \texttt{7'h7f}. Similarly, when \texttt{blank1} becomes 1, \texttt{HEX1} changes to \texttt{7'h7f}.\\
+	\\
+	The outputs update immediately after the corresponding input values and blanking signals change because the module is purely combinational logic and does not contain flip-flops.
+\subsection{Timekeeping (Watch V1)} %module 7.13 p.43
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v11.png}
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v12.png}
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v13.png}
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v14.png}
+	\caption{Waveform for \texttt{user\_top\_watch\_v1}.}
+\end{figure}
+% Waveform Explanation
+	Testbench sets 10 cycles as one period of a second. The signals are shown in hexadecimal.\\
+	\\
+	Seconds counter starts to count at t = 0 and advances every 10 cycles. When \texttt{seconds\_disp} reaches 60, it wraps around to 0 and \texttt{minutes\_disp} increments by one. Testbench only runs for 2 minutes and 5 seconds, so \texttt{hours\_disp} remains 0.
+	\\
+	\\
+\begin{reportbox}{Report 14}
+	Reflect on the role of the test suite.
+\end{reportbox}
+Testing cost grows exponatially as the combinations of possible input values grow. The test suite is important because manual testing on the FPGA board would be slow and unreliable. Even for basic timekeeping, it would need to wait long enough to check seconds rolling over to minutes, to hours, and hours wrapping back to zero. This take a long time for one version, and it would become impractical to repeat after every small change.\\
+\\
+As more features are added, such as edit mode, increment/decrement buttons, and different display states, the number of possible button combinations grows quickly. Testing all of these manually would be tedious and easy to do incompletely.\\
+\\
+Therefore, the automated test suite is valuable because it can repeatedly check expected behaviour much faster than manual testing. It also supports regression testing: when a new feature is added, the tests can immediately reveal whether an earlier function has been broken. This makes development safer, because old behaviour does not need to be manually rechecked from scratch every time.\\
+\\
+For example, testbenches can overide \texttt{CYCLES\_PER\_SECOND} to different values. If every second takes 50Ms, the testbench must has a significantly long simulating time length to cover every behaviors under testing. It is a good practice to allow parameters likes cycles count being changable, as simulation in smaller scale is easier for patterns tracking and debbugging.
+\subsection{Mode Selection (Watch V2)} %module 7.14 p.47
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v2.png}
+	\caption{Waveform for \texttt{user\_top\_watch\_v2}.}
+\end{figure}
+% Waveform Explanation
+For every 50 cycles, \texttt{second\_disp} increments by one because this testbench overides \texttt{CYCLES\_PER\_SECOND} to 50.\\
+\\
+\texttt{blank} signals are off when \texttt{button[3]} is pressed. A continuous press logner than 50 cycles change the mode form normal to seconds edit mode. Every new individual long-press moves watch to next mode, following the order of: normal to seconds, seconds to minutes, minutes to hours, then hours to normal.\\
+\\
+After entering each edit mode, the corresponding blank signal repeatly stays low for 20 cycles then turns high for 5 cycles. Importing this signal to display modules as \texttt{blank} could achieves 2Hz 80\% duty cycle outputs.
+\subsection{Settable Watch (V3)} %module 7.15 p.47
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v31.png}
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v32.png}
+	\caption{Waveform for \texttt{user\_top\_watch\_v3}.}
+\end{figure}
+% Waveform Explanation
+This version adding edit funtion besides existing mode selection function. The testbench setting for \texttt{CYCLES\_PER\_SECOND} and the waveforms of \texttt{blank} signals are the same as in watch V2.\\
+\\
+During each edit mode, a short press of \texttt{button[2]} increments that part by one and repeatedly advances every 5 cycles if the press lasts longer than 25 cycles.  
+\subsection{Accurate Time Setting (V4)} %module 7.16
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v41.png}
+	\caption{Waveform for \texttt{user\_top\_watch\_v4}.}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v42.png}
+	\caption{Waveform when edit mode transiting to minutes.}
+\end{figure}
+% Waveform Explanation
+Pressing \texttt{button[3]} in seconds edit mode changes the mode to minutes edit mode. As input of \texttt{button} changes to 8, \texttt{seconds\_edit} swiches low and \texttt{minutes\_edit} rises high at the next cycle.\\
+\\
+In module \texttt{restartable\_rate\_generator}:
+\begin{lstlisting}[language=Verilog]
+	assign rst_count    = !run || tick;
+\end{lstlisting}
+\texttt{rst\_count} rises high when input \texttt{run = 0}. Therefore, reset of the cycles count for \texttt{seconds\_tick} could be correctly trigger by setting \texttt{run} low when the edit button is pressed during seconds editing mode.\\
+\\
+After the transition of edit mode from \texttt{seconds\_edit} to \texttt{minutes\_edit}, signal \texttt{count} inside rate generator resets to 0 then advances every new cycle. So the \texttt{seconds\_tick} does not rise high until reaching the 50th cycle.\\
+\\  
+\begin{reportbox}{Report 16}
+	Does your design cause multiple resets? Why is this not a problem?
+\end{reportbox}
+
+\begin{reportbox}{Report 17}
+	Reflect on your experience in previous lab classes.
+\end{reportbox}
+\begin{reportbox}{Report 18}
+	Assume the 50 MHz clock on the DE1-SoC board is accurate to within 50 ppm. How many seconds might your watch drift over a 24-hour period?
+\end{reportbox}
 \section{Stopwatch and Timer}
 %=======================================================================
 % 44444444444444444444444444
