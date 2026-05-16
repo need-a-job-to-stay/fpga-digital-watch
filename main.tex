@@ -528,13 +528,66 @@ VS Code simulation enviroment can execute most of the developement procedures ex
 	Assume the 50 MHz clock on the DE1-SoC board is accurate to within 50 ppm. How many seconds might your watch drift over a 24-hour period?
 \end{reportbox}
 50ppm = 0.00005 = 0.005\% and 24 hours equals to 24×3600 = 86400 seconds. So the drift will be 86400 × 0.00005 = 4.32 seconds.
-\section{Stopwatch and Timer}
+
+
+\newpage
+\section{Formal Verification}
 %=======================================================================
 % 44444444444444444444444444
 %=======================================================================
-
-
-\section{Conclusion}
+\begin{reportbox}{Report 1}
+	When a module needs to be extended mid-design, several approaches are possible. Can you think of any other options? Justify your choices and discuss their trade-offs.
+\end{reportbox}
+Another option is to make the original module more general by adding parameters or optional ports, so that the old and new behaviours are selected by configuration rather than by maintaining two separate copies. In some cases the shared logic can also be factored into a smaller helper module, with two wrapper modules exposing the old and new interfaces.\\
+\\
+For this case, I would copy the original module, extend the copy, and rewrite the original as a thin wrapper around the extended version. I would keep the old module name for compatibility, for example \texttt{button\_auto\_repeat}, and name the new one according to the added behaviour, such as \texttt{button\_auto\_repeat\_no\_initial} or \texttt{button\_auto\_repeat\_extended}.\\
+\\
+This keeps existing code and tests working, because anything that instantiates the old module still sees the same interface and behaviour. At the same time, the new module can provide the extra functionality without duplicating most of the logic. The disadvantage is that there are now two module names to maintain, and the wrapper
+adds a small amount of indirection. However, this is usually better than modifying the original in place, which risks breaking earlier designs, or keeping two unrelated copies, which can diverge and become harder to debug.\\
+\begin{reportbox}{Report 2}
+	Do the assertions above fully capture the behaviour of an up-down counter with reset? If not, identify any behaviours left unspecified, or any properties a reasonable person might expect that the assertions do not guarantee.
+\end{reportbox}
+The assertions do not fully specify all behaviour. For example, they do
+not check for unknown (\texttt{X}) values, combinational glitches between clock edges, or whether reset is synchronous or asynchronous. They verify the main functional behaviour, but not every possible implementation detail.\\
+\begin{reportbox}{Report 3}
+	The configuration file verifies the counter for three specific values of MAX. Since this does not cover all possible values, how would you formally prove correctness when this module is used in a larger design?
+\end{reportbox}
+Testing only three values of \texttt{MAX} does not prove the module correct for all parameter choices. In a larger design, I would prove the counter after parameter specialisation: each instantiated counter has fixed values of \texttt{MAX} and \texttt{WIDTH}, so the formal tool only needs to prove correctness for those actual instances.\\
+\\
+I would also keep assertions inside or bound to the counter module, so every
+instance is checked with its own parameters. The proof should include assumptions that the parameters are valid, such as \texttt{MAX >= 0} and
+\texttt{(1 << WIDTH) > MAX}.\\
+\begin{reportbox}{Report 4}
+	Include the counterexample waveform. The general reason for this failure was explained above; use the waveform to identify the specific counterexample the checker found and explain why it is one. Then explain why restoring the assertion allows the induction step to succeed.
+\end{reportbox}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/report4.png}
+	\caption{Waveform for the counterexample.}
+\end{figure}
+It starts at step 4 count = 0 and reversely decrements to 7 which is larger than MAX=4. This does not trigger the ignored assertion so basecase test is passed but induction is not.
+\section{Stopwatch}
+%=======================================================================
+% 555555555555555555
+%=======================================================================
+\begin{reportbox}{Report 5}
+	Before reading further, sketch how you would approach the design.
+\end{reportbox}
+I will amend module top\_time\_display\_v1 by adding additional button inputs for start/stop and reset time.\\
+\begin{reportbox}{Report 6}
+	Using a feature layering approach, how would you decompose the stopwatch into layers? Describe the responsibility of each layer.
+\end{reportbox}
+There will be layers in the module. Timekeeping layer reponse to count time and react to start/stop and reset button. Display layer is responsible to transfer hms digits into HEX led display.
+\begin{reportbox}{Report 7}
+	Draw a block diagram of the design described above, clearly showing the data path and control signals. Compare it with your initial sketch from Section 4.2 and comment on any differences.
+\end{reportbox}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/report7.png}
+	\caption{Block diagram for data path of stopwatch.}
+\end{figure}
+Latch function is added along with new module and new funtion for a button. 
+\section{Timer}
 Done.
 
 \end{document}
