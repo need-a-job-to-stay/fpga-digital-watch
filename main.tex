@@ -586,7 +586,23 @@ There will be layers in the module. Timekeeping layer reponse to count time and 
 	\includegraphics[width=0.9\linewidth]{figures/report7.png}
 	\caption{Block diagram for data path of stopwatch.}
 \end{figure}
-Latch function is added along with new module and new funtion for a button. 
+Latch function is added along with new module and new funtion for a button. \\
+\begin{reportbox}{Report 8}
+	Explain how your implementation satisfies the first-tick timing constraint: the first centisecond increment must occur one centisecond after enable goes high, not sooner.
+\end{reportbox}
+When enable goes high, the counter does not increment immediately. The \texttt{restartable\_rate\_generator} first counts one centisecond worth of clock cycles. Only after this delay does it produce a one-cycle tick pulse. The cascade counter increments only when tick is high. Therefore, the first increment occurs exactly one centisecond after enable goes high, not sooner.\\
+\begin{reportbox}{Report 9}
+	Draw a diagram showing how this is implemented in hardware.
+\end{reportbox}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/report9.png}
+	\caption{Hardware inplementation diagram for report 9.}
+\end{figure}
+\begin{reportbox}{Report 10}
+	Draw the FSM state diagram before implementing it. After completing the implementation, note any differences between your diagram and the final design, and reflect on what caused them.
+\end{reportbox}
+Initial state should not has rst high. In final design the state is defined by {runinng or not, live display or not, only\_lap\_rise or not}. clk should be consider as an input that effects state too because rst is a one cycle event then the state shift back.
 \section{Timer}
 Done.
 

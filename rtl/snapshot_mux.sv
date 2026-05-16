@@ -1,3 +1,4 @@
+`timescale 1ns / 1ps
 module snapshot_mux #(
     parameter int WIDTH = 1
 ) (
@@ -7,7 +8,7 @@ module snapshot_mux #(
     output logic [WIDTH -1:0] q
 );
 
-  logic [WIDTH-1:0] last_d;
+  logic [WIDTH-1:0] last_d = '0;
 
   always_ff @(posedge clk) if (!hold) last_d <= d;
 
