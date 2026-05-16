@@ -519,11 +519,11 @@ After the transition of edit mode from \texttt{seconds\_edit} to \texttt{minutes
 \begin{reportbox}{Report 16}
 	Does your design cause multiple resets? Why is this not a problem?
 \end{reportbox}
-
+\texttt{rst\_count} rises high when input \texttt{run = 0}. It generates high signal lasting few cycles following \texttt{run}. The counter stops at one when reset is high. This does not result in unexpected behaviour.
 \begin{reportbox}{Report 17}
 	Reflect on your experience in previous lab classes.
 \end{reportbox}
-
+VS Code simulation enviroment can execute most of the developement procedures except baord compilation. Debbugging and code compilation usually take a long time on Quartus. VS Code enviroment integrates testbench, waveform, and fromal verification suit together improves efficiency by a lot.
 \begin{reportbox}{Report 18}
 	Assume the 50 MHz clock on the DE1-SoC board is accurate to within 50 ppm. How many seconds might your watch drift over a 24-hour period?
 \end{reportbox}
