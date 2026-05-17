@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-module wave_user_top_watch_v2;
+module wave_user_top_timer_v1;
   reg        clk = 0;
   reg  [3:0] button = 4'b0;
   reg  [9:0] sw = 10'b0;
@@ -16,7 +16,7 @@ module wave_user_top_watch_v2;
   //   PWM period (0.5 s)  = 25 cycles  = 250 ns  (2 Hz flash)
   //   PWM high (0.1 s)    =  5 cycles  =  50 ns  (display off, 20% of period)
   //   Hold threshold (1s) = 50 cycles  = 500 ns
-  user_top_watch_v2 #(
+  user_top_timer_v1 #(
       .CYCLES_PER_SECOND(50)
   ) dut (
       .clk          (clk),
@@ -31,11 +31,12 @@ module wave_user_top_watch_v2;
       .blank_seconds(blank_seconds)
   );
 
+
   always #5 clk = ~clk;  // 100 MHz: 10 ns period
 
   initial begin
-    $dumpfile("wave_user_top_watch_v2.vcd");
-    $dumpvars(0, wave_user_top_watch_v2);
+    $dumpfile("wave_user_top_timer_v1.vcd");
+    $dumpvars(0, wave_user_top_timer_v1);
 
     // --- Normal operation: watch counts for ~1.5 seconds ---
     // seconds_disp advances once per 50 cycles; blank_* remain 0.
@@ -49,8 +50,14 @@ module wave_user_top_watch_v2;
     button[3] = 1;
     #550;  // 55 cycles held high
 
-    button[3] = 0;
-    #1000;  // 100 cycles released; observe seconds flashing (4 PWM cycles visible)
+    button[3] = 0;  // 100 cycles released; observe seconds flashing (4 PWM cycles visible)
+    button[0] = 1;
+    #1000;
+    button[0] = 0;
+    button[1] = 1;
+    #50;
+    button[1] = 0;
+    #300;
 
     // --- Short press 1: advance seconds -> minutes ---
     // Rising edge detected while armed; mod-3 counter advances to 1.
@@ -58,7 +65,10 @@ module wave_user_top_watch_v2;
     button[3] = 1;
     #100;  // 10 cycles
     button[3] = 0;
-    #1000;  // 100 cycles released; observe minutes flashing (4 PWM cycles visible)
+    button[1] = 1;
+    #50;
+    button[1] = 0;
+    #950;  // 100 cycles released; observe minutes flashing (4 PWM cycles visible)
 
     // --- Short press 2: advance minutes -> hours ---
     // Counter advances to 2; mode_enable becomes 3'b100.
@@ -71,13 +81,34 @@ module wave_user_top_watch_v2;
     // disarm condition fires (count==2 && enable_counter); latch clears.
     // mode_enable returns to 3'b000; all blank_* return to 0.
     button[3] = 1;
-    #100;
+    #200;
     button[3] = 0;
 
     // --- Normal operation resumes ---
     // blank_* are all 0; seconds_disp continues incrementing.
-    #500;  // 50 cycles
+    #1000;  // 50 cycles
 
+    //start count down
+    button[0] = 1;
+    #50;
+    button[0] = 0;
+    #25000;
+    //Try enter set mode when running
+    button[3] = 1;
+    #1000;
+    button[3] = 0;
+    #24000;
+
+    //paulse and restart
+    button[0] = 1;
+    #50;
+    button[0] = 0;
+    #1000;
+    button[0] = 1;
+    #50;
+    button[0] = 0;
+    #30000;
     $finish;
   end
+
 endmodule

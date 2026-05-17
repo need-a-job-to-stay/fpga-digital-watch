@@ -597,13 +597,56 @@ When enable goes high, the counter does not increment immediately. The \texttt{r
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.9\linewidth]{figures/report9.png}
-	\caption{Hardware inplementation diagram for report 9.}
+	\caption{Assumption state diagram for \texttt{stopwatch\_control}.}
 \end{figure}
 \begin{reportbox}{Report 10}
 	Draw the FSM state diagram before implementing it. After completing the implementation, note any differences between your diagram and the final design, and reflect on what caused them.
 \end{reportbox}
-Initial state should not has rst high. In final design the state is defined by {runinng or not, live display or not, only\_lap\_rise or not}. clk should be consider as an input that effects state too because rst is a one cycle event then the state shift back.
+Original initial state falsly combined two states: default state should not has rst high but make rst high as an independent state. Follows initial idea, clk should be consider as an input that effects state too because rst is a one cycle event then the state shift back.\\
+\\
+The final design followed hints to encode states by output:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/report10.png}
+	\caption{State diagram for final design for \texttt{stopwatch\_control}.}
+\end{figure}
 \section{Timer}
-Done.
+\begin{reportbox}{Report 11}
+	Find the datasheet for the 74LS193 synchronous 4-bit up/down counter. Using the schematic diagram in the datasheet, explain how the borrow output is generated and why it behaves as it does.
+\end{reportbox}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.9\linewidth]{figures/74LS193.png}
+	\caption{Schematic diagram of 74LS193.}
+\end{figure}
+Borrow is a output of a NAND gate taking inputs from: !down count, !$Q_d$, !$Q_c$, !$Q_b$, and !$Q_a$. So the borrow output goes low only when all these inputs are zero. That means the counter is currently at zero, and a down-count pulse is being applied. So the borrow output is active-low.\\
+\\
+So if several 74LS193 counters are connected together, the borrow output from the lower 4-bit counter can drive the down-count input of the next higher counter. When the low-order counter goes from 0000 to 1111, it produces a borrow pulse telling the next counter to decrement by one.
+\begin{reportbox}{Report 12}
+	Describe your integration plan: which features did you implement first, and why?
+\end{reportbox}
+I first implement Mode selection function because it is small and similar to watch part while count down function can not independenty work. If count down module independently running, time will start at 0 and can test count down function due to restriction.
+\begin{reportbox}{Report 13}
+	The timer requires an FSM to manage its three modes. Explain your FSM design: what are the states, what are the transitions, and how did you encode the states? Justify your choices.
+\end{reportbox}
+\begin{reportbox}{Report 14}
+	
+\end{reportbox}
+\begin{reportbox}{Report 15}
+	
+\end{reportbox}
+\begin{reportbox}{Report 16}
+	
+\end{reportbox}
+\begin{reportbox}{Report 17}
+	
+\end{reportbox}
+\begin{reportbox}{Report 18}
+	
+\end{reportbox}
+\begin{reportbox}{Report 19}
+	
+\end{reportbox}
+\section{Timer}\section{Timer}\section{Timer}
 
 \end{document}
