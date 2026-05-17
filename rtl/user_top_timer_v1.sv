@@ -102,9 +102,9 @@ module user_top_timer_v1 #(
   assign seconds_tick = one_hz_tick && running && time_not0 && not_editting;
 
   // Zero -extend counter values to display outputs
-  assign hours_disp = (blank_hours) ? '0 : {2'b0, hours};
-  assign minutes_disp = (blank_minutes) ? '0 : {1'b0, minutes};
-  assign seconds_disp = (blank_seconds) ? '0 : {1'b0, seconds};
+  assign hours_disp = {2'b0, hours};
+  assign minutes_disp = {1'b0, minutes};
+  assign seconds_disp = {1'b0, seconds};
 
   assign minutes_tick = seconds_borrow_out;
   assign hours_tick = minutes_borrow_out;

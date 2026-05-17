@@ -33,13 +33,54 @@ module user_top_timepiece_v1 #(
   ui_in_t watch_in, timer_in, sw_in;
   ui_out_t watch_out, timer_out, sw_out;
 
-  // TO DO -- instantiate :
-  // user_top_watch_v4
-  // user_top_timer_v1
-  // user_top_stopwatch_v1
-  //
-  // Connect the ports up to the appropriate ui_in and ui_out
-  // e.g., for the watch, .button(watch_in.button)
+  assign watch_in = ui_top_in_no_buttons;
+  assign timer_in = ui_top_in;
+  assign sw_in    = ui_top_in;
+
+  user_top_watch_v4 #(
+      .CYCLES_PER_SECOND(CYCLES_PER_SECOND)
+  ) u_watch (
+      .clk(clk),
+      .button(watch_in.button),
+      .sw(watch_in.sw),
+      .led(watch_out.led),
+      .hours_disp(watch_out.hours_disp),
+      .minutes_disp(watch_out.minutes_disp),
+      .seconds_disp(watch_out.seconds_disp),
+      .blank_hours(watch_out.blank_hours),
+      .blank_minutes(watch_out.blank_minutes),
+      .blank_seconds(watch_out.blank_seconds)
+  );
+
+  user_top_timer_v1 #(
+      .CYCLES_PER_SECOND(CYCLES_PER_SECOND)
+  ) u_timer (
+      .clk(clk),
+      .button(timer_in.button),
+      .sw(timer_in.sw),
+      .led(timer_out.led),
+      .hours_disp(timer_out.hours_disp),
+      .minutes_disp(timer_out.minutes_disp),
+      .seconds_disp(timer_out.seconds_disp),
+      .blank_hours(timer_out.blank_hours),
+      .blank_minutes(timer_out.blank_minutes),
+      .blank_seconds(timer_out.blank_seconds)
+  );
+
+  user_top_stopwatch_v1 #(
+      .CYCLES_PER_SECOND(CYCLES_PER_SECOND)
+  ) u_stopwatch (
+      .clk(clk),
+      .button(sw_in.button),
+      .sw(sw_in.sw),
+      .led(sw_out.led),
+      .hours_disp(sw_out.hours_disp),
+      .minutes_disp(sw_out.minutes_disp),
+      .seconds_disp(sw_out.seconds_disp),
+      .blank_hours(sw_out.blank_hours),
+      .blank_minutes(sw_out.blank_minutes),
+      .blank_seconds(sw_out.blank_seconds)
+  );
 
   // ------------
   // Multiplexers

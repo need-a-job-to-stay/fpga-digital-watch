@@ -48,8 +48,11 @@ module user_top_brightness_wrapper #(
       .blank_seconds(top_blank_seconds)
   );
 
-  always_comb begin
-    case (sw[9:8])
+  logic [1:0] brightness_sel;
+  assign brightness_sel = sw[9:8];
+
+  always @(*) begin
+    case (brightness_sel)
       2'b00:   duty_cycles = DimDuty;
       2'b01:   duty_cycles = LowDuty;
       2'b11:   duty_cycles = MediumDuty;
