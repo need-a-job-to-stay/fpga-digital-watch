@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module wave_timer_edit_reset;
+module wave_timer_edit_rest;
   reg        clk = 0;
   reg  [3:0] button = 4'b0;
   reg  [9:0] sw = 10'b0;

@@ -33,7 +33,7 @@ module user_top_brightness_timepiece #(
   logic [31:0] duty_cycles;
   logic pwm_on;
 
-  user_top_timepiece_v1 #(
+  user_top_timepiece_v2 #(
       .CYCLES_PER_SECOND(CYCLES_PER_SECOND)
   ) u_user_top (
       .clk(clk),
