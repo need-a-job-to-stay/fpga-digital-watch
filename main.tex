@@ -97,7 +97,6 @@
 This project uses Git for data backup and version control. The forked repository is stored in the personal account on GitHub.
 The committed code is pushed to the remote repository after each module is completed and tested. This ensures that the latest version of the code is always backed up and can be easily accessed from any location.
 
-
 \section{Time Display}
 	\subsection{Seven-segment Display Decoder for Dexadecimal Digits} %module 6.1 p.17
 
@@ -498,7 +497,7 @@ The committed code is pushed to the remote repository after each module is compl
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\linewidth]{figures/user_top_watch_v42.png}
-		\caption{Waveform when edit mode transiting to minutes.}
+		\caption{Waveform of transition form edit mode to minutes.}
 	\end{figure}
 	% Waveform Explanation
 	Pressing \texttt{button[3]} in seconds edit mode changes the mode to minutes edit mode. As input of \texttt{button} changes to 8, \texttt{seconds\_edit} swiches low and \texttt{minutes\_edit} rises high at the next cycle.\\
@@ -560,7 +559,7 @@ The committed code is pushed to the remote repository after each module is compl
 	\end{figure}
 	It starts at step 4 count = 0 and reversely decrements to 7 which is larger than MAX=4. This does not trigger the ignored assertion so basecase test is passed but induction is not.
 
-	\section{Stopwatch}
+\section{Stopwatch}
 	\begin{reportbox}{Report 5}
 		Before reading further, sketch how you would approach the design.
 	\end{reportbox}
@@ -621,7 +620,37 @@ The committed code is pushed to the remote repository after each module is compl
 	\begin{reportbox}{Report 13}
 		The timer requires an FSM to manage its three modes. Explain your FSM design: what are the states, what are the transitions, and how did you encode the states? Justify your choices.
 	\end{reportbox}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\linewidth]{figures/report13.png}
+		\caption{State diagram of modes selection for texttt{user\_top\_timer\_v1}.}
+	\end{figure}
+		\begin{lstlisting}[language=Verilog]
+			logic [2:0] mode_enable;
+			logic not_editting;
+			logic time_not0;
+			logic running = 1'b0;
 
+			always_ff @(posedge clk) begin
+				if (not_editting && ((time_not0 & start_stop)  // paulse or staet when time > 0
+					|| (!time_not0 && running)))  //stop when reach 0
+				running <= !running;
+				if (!not_editting) running <= 1'b0;
+			end
+
+			assign not_editting = (mode_enable == '0);
+			assign time_not0 = ({hours, minutes, seconds} != '0);
+
+			edit_mode_selector #(
+				.HOLD_CYCLES(CYCLES_PER_SECOND)
+			) u_mode_selector (
+				.clk(clk),
+				.button(button[3] && !running),
+				.mode_enable(mode_enable)
+			);		
+
+		\end{lstlisting}
+	
 \section{Timepiece}
 	\begin{reportbox}{Report 14}
 		Looking back across both assignments, reflect on your experience designing and implementing a digital watch on an FPGA. What went well, what was harder than expected, and what would you do differently if you were starting over?
@@ -659,7 +688,7 @@ The committed code is pushed to the remote repository after each module is compl
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=0.9\linewidth]{figures/proc.png}
-			\caption{Graphviz representation of design of texttt{mod\_n\_counter}.}
+			\caption{Graphviz representation of design of \texttt{mod\_n\_counter}.}
 		\end{figure}
 		\$sdffe represents a synchronous D flip-flop with enable and synchronous reset.\\
 		\\
@@ -679,7 +708,7 @@ The committed code is pushed to the remote repository after each module is compl
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=0.9\linewidth]{figures/techmap.png}
-			\caption{Technology map for texttt{mod\_n\_counter}.}
+			\caption{Technology map for \texttt{mod\_n\_counter}.}
 		\end{figure}
 		The technology mapping stage breaks the abstract Verilog operations into smaller technology-independent primitive cells that more closely resemble actual hardware implementation. Earlier, the counter register appeared as a single multi-bit \texttt{\$sdffe} cell, but after \texttt{techmap} it becomes two separate \texttt{\$SDFFE\_PP0P} instances because the 2-bit \texttt{count} register is physically implemented using two independent flip-flops, one per stored bit.\\
 		\\
@@ -717,33 +746,34 @@ The committed code is pushed to the remote repository after each module is compl
 			\caption{abc for texttt{mod\_n\_counter}.}
 		\end{figure}
 
-\begin{figure}[H]
-			\centering
-			\includegraphics[width=0.9\linewidth]{figures/report19.png}
-			\caption{Circuit schematic for two flip-flops and gates.}
-		\end{figure}
-The truth table is:
+	\begin{figure}[H]
+				\centering
+				\includegraphics[width=0.9\linewidth]{figures/report19.png}
+				\caption{Circuit schematic for two flip-flops and gates.}
+			\end{figure}
+	The truth table is:
 
-\[
-\begin{array}{c c|c c|c}
-q_1 & q_0 & d_1 = q_1 \oplus q_0 & d_0 = \sim q_0 & \text{Next count} \\
-\hline
-0 & 0 & 0 & 1 & 01 \\
-0 & 1 & 1 & 0 & 10 \\
-1 & 0 & 1 & 1 & 11 \\
-1 & 1 & 0 & 0 & 00 \\
-\end{array}
-\]
+	\[
+	\begin{array}{c c|c c|c}
+	q_1 & q_0 & d_1 = q_1 \oplus q_0 & d_0 = \sim q_0 & \text{Next count} \\
+	\hline
+	0 & 0 & 0 & 1 & 01 \\
+	0 & 1 & 1 & 0 & 10 \\
+	1 & 0 & 1 & 1 & 11 \\
+	1 & 1 & 0 & 0 & 00 \\
+	\end{array}
+	\]
 
-This matches the expected modulo-4 counter sequence:
+	This matches the expected modulo-4 counter sequence:
 
-\[
-00 \rightarrow 01 \rightarrow 10 \rightarrow 11 \rightarrow 00
-\]
+	\[00 \rightarrow 01 \rightarrow 10 \rightarrow 11 \rightarrow 00\]
 
-Therefore, \texttt{abc} has reduced the original higher-level mux/add/compare logic into the minimal Boolean form needed for this specific 2-bit counter. The behaviour is unchanged, but the implementation is now much closer to real gate-level hardware.
-	\section{Enhancements}
-	
-	\section{Timer}
+	Therefore, \texttt{abc} has reduced the original higher-level mux/add/compare logic into the minimal Boolean form needed for this specific 2-bit counter. The behaviour is unchanged, but the implementation is now much closer to real gate-level hardware.
+
+\section{Enhancements}
+	\begin{reportbox}{Report 21}
+		Based on your experience across both assignments, explain which parts of a digital watch are well suited to an FPGA and which would be easier to implement in software. Assume that any component responsible for counting or tracking time requires clock-cycle accuracy.
+	\end{reportbox}
+\section{Timer}
 
 \end{document}
