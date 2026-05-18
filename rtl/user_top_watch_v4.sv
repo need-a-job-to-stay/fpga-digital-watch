@@ -1,5 +1,4 @@
 `timescale 1ns / 1ps
-
 module user_top_watch_v4 #(
     /* verilator lint_off UNUSEDPARAM */
     parameter int CYCLES_PER_SECOND = 50_000_000

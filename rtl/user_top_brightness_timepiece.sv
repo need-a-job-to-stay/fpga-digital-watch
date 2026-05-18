@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module user_top_brightness_wrapper #(
+module user_top_brightness_timepiece #(
     parameter int CYCLES_PER_SECOND = 50_000_000
 ) (
     input logic clk,
@@ -33,7 +33,7 @@ module user_top_brightness_wrapper #(
   logic [31:0] duty_cycles;
   logic pwm_on;
 
-  user_top #(
+  user_top_timepiece_v1 #(
       .CYCLES_PER_SECOND(CYCLES_PER_SECOND)
   ) u_user_top (
       .clk(clk),

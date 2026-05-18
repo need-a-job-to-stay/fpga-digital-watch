@@ -33,10 +33,6 @@ module user_top_timepiece_v1 #(
   ui_in_t watch_in, timer_in, sw_in;
   ui_out_t watch_out, timer_out, sw_out;
 
-  assign watch_in = ui_top_in_no_buttons;
-  assign timer_in = ui_top_in;
-  assign sw_in    = ui_top_in;
-
   user_top_watch_v4 #(
       .CYCLES_PER_SECOND(CYCLES_PER_SECOND)
   ) u_watch (
@@ -110,17 +106,26 @@ module user_top_timepiece_v1 #(
     case (mode_sel)
       // Stopwatch
       2'b01: begin
-        // TO DO -- fill in appropriately
+        sw_in = ui_top_in;
+        ui_top_out = sw_out;
+        timer_in = ui_top_in_no_buttons;
+        watch_in = ui_top_in_no_buttons;
       end
 
       // Timer
       2'b11: begin
-        // TO DO -- fill in appropriately
+        timer_in = ui_top_in;
+        ui_top_out = timer_out;
+        sw_in = ui_top_in_no_buttons;
+        watch_in = ui_top_in_no_buttons;
       end
 
       // Watch
       default: begin
-        // TO DO -- fill in appropriately
+        watch_in = ui_top_in;
+        ui_top_out = watch_out;
+        timer_in = ui_top_in_no_buttons;
+        sw_in = ui_top_in_no_buttons;
       end
     endcase
 
