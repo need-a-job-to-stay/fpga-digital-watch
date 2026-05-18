@@ -1,14 +1,11 @@
 `timescale 1ns / 1ps
 
-module user_top_timer_v1 #(
+module user_top_timer_add_preset #(
     /* verilator lint_off UNUSEDPARAM */
     parameter int CYCLES_PER_SECOND = 50_000_000
     /* verilator lint_on UNUSEDPARAM */
 ) (
-`ifdef FORMAL
-    output logic probe_running,
-    output logic [2:0] probe_mode_enable,
-`endif
+
     input logic clk,
     /* verilator lint_off UNUSED */
     input logic [3:0] button,
@@ -31,18 +28,27 @@ module user_top_timer_v1 #(
   logic start_stop;
   logic time_not0;
   logic running = 1'b0;
+  logic clr;
+  logic preset_load;
+  logic preset_load_d;
+  logic [5:0] preset_seconds;
+  logic [5:0] preset_minutes;
+  logic [4:0] preset_hours;
+  logic not_editting;
 
   // Seconds
   logic seconds_tick;
   logic seconds_edit;
   logic seconds_borrow_out;
   logic [5:0] seconds;
-  editable_countdown #(
+  editable_countdown_preset #(
       .MAX  (59),
       .WIDTH(6)
   ) u_seconds (
       .clk(clk),
-      .clr(1'b0),
+      .clr(clr),
+      .load(preset_load_d),
+      .load_value(preset_seconds),
       .tick(seconds_tick),
       .edit_mode(seconds_edit),
       .inc(auto_repeat_dec),
@@ -51,17 +57,20 @@ module user_top_timer_v1 #(
       .borrow_out(seconds_borrow_out)
   );
 
+
   // minutes
   logic minutes_tick;
   logic minutes_edit;
   logic minutes_borrow_out;
   logic [5:0] minutes;
-  editable_countdown #(
+  editable_countdown_preset #(
       .MAX  (59),
       .WIDTH(6)
   ) u_minutes (
       .clk(clk),
-      .clr(1'b0),
+      .clr(clr),
+      .load(preset_load_d),
+      .load_value(preset_minutes),
       .tick(minutes_tick),
       .edit_mode(minutes_edit),
       .inc(auto_repeat_dec),
@@ -75,12 +84,14 @@ module user_top_timer_v1 #(
   logic hours_edit;
   logic hours_borrow_out;
   logic [4:0] hours;
-  editable_countdown #(
+  editable_countdown_preset #(
       .MAX  (23),
       .WIDTH(5)
   ) u_hours (
       .clk(clk),
-      .clr(1'b0),
+      .clr(clr),
+      .load(preset_load_d),
+      .load_value(preset_hours),
       .tick(hours_tick),
       .edit_mode(hours_edit),
       .inc(auto_repeat_dec),
@@ -119,12 +130,59 @@ module user_top_timer_v1 #(
   end
 
   // ------------------
-  // Mode_select
+  // Preset time interval
   // ------------------
 
+  logic button2;
+  logic [2:0] default_selection;
   logic [2:0] mode_enable;
-  logic not_editting;
+  logic preset_mode;
+  logic preset_advance;
 
+
+  always_ff @(posedge clk) preset_load_d <= preset_load;
+
+  always_comb begin
+    preset_hours   = 5'd0;
+    preset_minutes = 6'd0;
+    preset_seconds = 6'd0;
+
+    case (default_selection)
+      3'd1: preset_seconds = 6'd30;  //30s
+      3'd2: preset_minutes = 6'd1;  // 1 min
+      3'd3: preset_minutes = 6'd5;  // 5 min
+      3'd4: preset_minutes = 6'd25;  // 25 min
+      default: begin
+        preset_hours   = 5'd0;
+        preset_minutes = 6'd0;
+        preset_seconds = 6'd0;
+      end
+    endcase
+  end
+
+  // button2 is signal for clr if in edit mode of if stopped but time is not 0
+  assign clr = button2 && !not_editting;
+  assign preset_load = button2 && preset_mode;
+  assign preset_mode = not_editting && !running && (default_selection != 3'd0 || !time_not0);
+
+  rising_edge_detector u_button2 (
+      .clk(clk),
+      .sig_in(button[2]),
+      .rise(button2)
+  );
+
+  mod_n_counter #(
+      .N(5),
+      .WIDTH(3)
+  ) u_default_selector (
+      .clk(clk),
+      .rst(running || !not_editting),
+      .enable(preset_load),
+      .count(default_selection)
+  );
+  // ------------------
+  // Mode_select
+  // ------------------
 
   edit_mode_selector #(
       .HOLD_CYCLES(CYCLES_PER_SECOND)
@@ -139,7 +197,7 @@ module user_top_timer_v1 #(
       // 2Hz
       .PERIOD_CYCLES(CYCLES_PER_SECOND / 2),
       // 80% duty cycle
-      .DUTY_CYCLES  (CYCLES_PER_SECOND / 2 * 0.2)
+      .DUTY_CYCLES  (CYCLES_PER_SECOND / 2 / 5)
   ) u_pwm_generator (
       .clk(clk),
       .rst(not_editting),
@@ -166,7 +224,7 @@ module user_top_timer_v1 #(
 
   button_auto_repeat #(
       //hold longer than 0.5s
-      .HOLD_CYCLES  (CYCLES_PER_SECOND * 0.5),
+      .HOLD_CYCLES  (CYCLES_PER_SECOND / 2),
       //10Hz
       .REPEAT_CYCLES(CYCLES_PER_SECOND / 10)
   ) u_dec_auto_repeat (
@@ -186,12 +244,15 @@ module user_top_timer_v1 #(
       .pulse(auto_repeat_inc)
   );
 
-  rising_edge_detector u_start_stop (
+  logic button0;
+
+  rising_edge_detector u_button0 (
       .clk(clk),
       .sig_in(button[0]),
-      .rise(start_stop)
+      .rise(button0)
   );
 
+  assign start_stop = button0 || (button2 && running);
 
   // Unused
   assign led = 10'b0;

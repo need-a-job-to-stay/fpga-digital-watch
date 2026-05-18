@@ -678,7 +678,7 @@ The committed code is pushed to the remote repository after each module is compl
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=0.9\linewidth]{figures/elaborated.png}
-			\caption{Graphviz representation of design of texttt{mod\_n\_counter}.}
+			\caption{Graphviz representation of design for texttt{mod\_n\_counter}.}
 		\end{figure}
 		\$eq checks if zero extend \texttt{count} equals to max - 1. The result is the swich of \$mux. \$add computes the result of \texttt{count} plus 1. The result is output as an input to \$mux. \$mux operates base on the swich and decides which of the input should ultimately send to \$2 to decide \texttt{next\_count}.\\
 
@@ -688,7 +688,7 @@ The committed code is pushed to the remote repository after each module is compl
 		\begin{figure}[H]
 			\centering
 			\includegraphics[width=0.9\linewidth]{figures/proc.png}
-			\caption{Graphviz representation of design of \texttt{mod\_n\_counter}.}
+			\caption{proc.png of design for \texttt{mod\_n\_counter}.}
 		\end{figure}
 		\$sdffe represents a synchronous D flip-flop with enable and synchronous reset.\\
 		\\
@@ -746,11 +746,11 @@ The committed code is pushed to the remote repository after each module is compl
 			\caption{abc for texttt{mod\_n\_counter}.}
 		\end{figure}
 
-	\begin{figure}[H]
-				\centering
-				\includegraphics[width=0.9\linewidth]{figures/report19.png}
-				\caption{Circuit schematic for two flip-flops and gates.}
-			\end{figure}
+		\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.9\linewidth]{figures/report19.png}
+			\caption{Circuit schematic for two flip-flops and gates.}
+		\end{figure}
 	The truth table is:
 
 	\[
@@ -770,10 +770,67 @@ The committed code is pushed to the remote repository after each module is compl
 
 	Therefore, \texttt{abc} has reduced the original higher-level mux/add/compare logic into the minimal Boolean form needed for this specific 2-bit counter. The behaviour is unchanged, but the implementation is now much closer to real gate-level hardware.
 
-\section{Enhancements}
+\section{Enhancements: Timer clearer and Preset Timer Interval}
+	\subsection{Specification}
+	This function is accessable only in Timer Mode. 
+	\begin{itemize}
+			\item In edit mode: Pressing of \texttt{button[2]} reset time to zero.
+			\item When timer is running: Pressing \texttt{button[2]} is equivalent to a press of \texttt{button[0]} that stops the timer. If both buttons are pressed at the same time, the timer stop.
+			\item When timer is stopped with remaining time: ignore \texttt{button[2]}
+			\item When timer is stopped with no remaining time: A press of \texttt{button[2]} jumps to different preset intervals in order then finally back to 0. Every time the first default interval is 30 seconds then follow by others. If the timer has time greater than zero, timer can be started by pressing \texttt{button[0]}.
+			\item Default interval: 30 seconds; 1 minute; 5 minutes; 25 minutes
+		\end{itemize}
+	Press of \texttt{button[2]} is detected by \texttt{rising\_edge\_detector}. Any identified presses from both button whose single-cycle-pulse generated from detector that happened in different cycles is treated as independent event and will change the timer behaviour if it is a valid input in the current state. 
+	\textbf{State Diagram}
+	Block \texttt{1 N} is the representation of all possible running timer.
+	\begin{figure}[H]
+			\centering
+			\includegraphics[width=1.0\linewidth]{figures/report20_1.png}
+			\caption{State diagram for preset timer interval selection.}
+	\end{figure}
+
+	\subsection{Testbench}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\linewidth]{figures/user_top_timer_add_preset1.png}
+		\caption{Waveform showing preset interval selection and countdown.}
+	\end{figure}
+	Pressing \texttt{button[2]} when timer is stopped at zero changes \texttt{default\_selection} in the sequence 1, 2, 3, 4, then back to 0. The corresponding display values change to 30 seconds, 1 minute, 5 minutes, 25 minutes, and finally 0.\\
+	\\
+	\texttt{preset\_load} rises when \texttt{button[2]} is detected in preset mode. Since \texttt{default\_selection} updates at the clock edge, \texttt{preset\_load\_d} delays the load signal by one cycle, so the newly selected interval is loaded instead of the previous one.\\
+	\\
+	When \texttt{button[0]} is pressed, \texttt{running} becomes high and the timer starts counting down. At the same time, \texttt{default\_selection} resets to 0. This makes the next preset selection start from 30 seconds again.\\
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\linewidth]{figures/same_time_press.png}
+		\caption{Waveform showing button[2] and button[0] press at the same time.}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\linewidth]{figures/edit_reset.png}
+		\caption{Waveform showing reset of time in edit mode.}
+	\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1.0\linewidth]{figures/ignore2.png}
+		\caption{Waveform showing button[2] reation.}
+	\end{figure}	
+	When timer is stopped with remaining time, \texttt{button[2]} does not trigger any output or state.
+	
+	
+\section{Reflection}
 	\begin{reportbox}{Report 21}
 		Based on your experience across both assignments, explain which parts of a digital watch are well suited to an FPGA and which would be easier to implement in software. Assume that any component responsible for counting or tracking time requires clock-cycle accuracy.
 	\end{reportbox}
-\section{Timer}
+	Some parts of a digital watch are very well suited to FPGA hardware because they naturally operate in parallel and depend on precise timing. Counters, clock dividers, PWM brightness control, and seven-segment display driving are all simple synchronous circuits that map directly onto flip-flops and combinational logic. For example, the stopwatch, timer, and watch counters all run concurrently without needing a scheduler or operating system. The FPGA also provides deterministic timing behaviour: at 50 MHz, every clock edge occurs at a fixed interval, which makes implementing accurate tick generation straightforward. PWM brightness control is also naturally hardware-oriented because it only requires counters and combinational comparisons running continuously in parallel. The synthesis investigation with Yosys showed this clearly: behavioural Verilog was reduced into flip-flops, XOR gates, NOT gates, and multiplexers representing the actual hardware structure.\\
+	\\
+	Hardware is also advantageous for real-time signal handling. Button presses, edge detection, debouncing, and auto-repeat logic can all operate simultaneously every clock cycle with extremely low latency. The FPGA continuously evaluates all logic in parallel, unlike software which executes instructions sequentially. This became especially clear during waveform debugging and formal verification, where each module behaved like an independent hardware machine instead of a sequence of instructions.\\
+	\\
+	However, some parts would be easier in software. Complex control logic and user interaction are generally simpler to express procedurally. For example, the stopwatch and timer FSMs required careful reasoning about states, transitions, enable conditions, and one-cycle pulses. In software, these behaviours could often be implemented with a few variables and if-statements inside a loop. Features such as mode switching, menu systems, alarms, or storing configuration values are usually easier to write and modify in software because software naturally supports abstraction, dynamic data structures, and sequential control flow.\\
+	\\
+	Debugging can also be easier in software. In FPGA design, bugs may arise from timing interactions, race conditions, width mismatches, or synthesis behaviour differing from simulation. The project repeatedly emphasised the distinction between simulation and synthesis. Hardware debugging often required waveform inspection and formal verification to locate faults. In contrast, software debugging typically provides easier visibility into variables and execution flow.\\
+	\\
+	Overall, FPGA hardware is strongest for deterministic, highly parallel, timing-critical components such as counters and display driving, while software is generally more convenient for complex control flow, user interfaces, and high-level behaviour. A real embedded product would often combine both approaches: dedicated hardware peripherals for timing-critical tasks and software running on a processor for overall system control.\\
+	\\
 
 \end{document}
