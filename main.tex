@@ -563,11 +563,12 @@ The committed code is pushed to the remote repository after each module is compl
 	\begin{reportbox}{Report 5}
 		Before reading further, sketch how you would approach the design.
 	\end{reportbox}
-	I will amend module top\_time\_display\_v1 by adding additional button inputs for start/stop and reset time.\\
+	I will amend module top\_time\_display\_v1 by adding additional button inputs for start/stop and reset time.\\ 
 	\begin{reportbox}{Report 6}
 		Using a feature layering approach, how would you decompose the stopwatch into layers? Describe the responsibility of each layer.
 	\end{reportbox}
-	There will be layers in the module. Timekeeping layer reponse to count time and react to start/stop and reset button. Display layer is responsible to transfer hms digits into HEX led display.
+	There will be layers in the module. Timekeeping layer reponse to count time and react to start/stop and reset button. Display layer is responsible to transfer hms digits into HEX led display.\\
+	\\
 	\begin{reportbox}{Report 7}
 		Draw a block diagram of the design described above, clearly showing the data path and control signals. Compare it with your initial sketch from Section 4.2 and comment on any differences.
 	\end{reportbox}
@@ -597,7 +598,7 @@ The committed code is pushed to the remote repository after each module is compl
 	The final design followed hints to encode states by output:
 	\begin{figure}[H]
 		\centering
-		\includegraphics[width=0.9\linewidth]{figures/report10.png}
+		\includegraphics[width=1.0\linewidth]{figures/report10.png}
 		\caption{State diagram for final design for \texttt{stopwatch\_control}.}
 	\end{figure}
 
