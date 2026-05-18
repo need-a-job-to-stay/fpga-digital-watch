@@ -263,9 +263,6 @@ The committed code is pushed to the remote repository after each module is compl
 			When \texttt{HEX0} reaches 10 (9 in terms of display), it wraps around to 40(0 in terms of display) and \texttt{HEX1} changes from 40 to 63.\\
 
 \section{Settable Watch}
-	%=======================================================================
-	% 333333333333333333333333333333333333333333
-	%=======================================================================
 	\subsection{Fixed-frequency Fixed-duty PWM Generator} %module 7.1 p.28
 
 	\begin{figure}[H]
@@ -514,10 +511,12 @@ The committed code is pushed to the remote repository after each module is compl
 		Does your design cause multiple resets? Why is this not a problem?
 	\end{reportbox}
 	\texttt{rst\_count} rises high when input \texttt{run = 0}. It generates high signal lasting few cycles following \texttt{run}. The counter stops at one when reset is high. This does not result in unexpected behaviour.
+	\\
 	\begin{reportbox}{Report 17}
 		Reflect on your experience in previous lab classes.
 	\end{reportbox}
 	VS Code simulation enviroment can execute most of the developement procedures except baord compilation. Debbugging and code compilation usually take a long time on Quartus. VS Code enviroment integrates testbench, waveform, and fromal verification suit together improves efficiency by a lot.
+	\\
 	\begin{reportbox}{Report 18}
 		Assume the 50 MHz clock on the DE1-SoC board is accurate to within 50 ppm. How many seconds might your watch drift over a 24-hour period?
 	\end{reportbox}
@@ -764,7 +763,6 @@ The committed code is pushed to the remote repository after each module is compl
 	1 & 1 & 0 & 0 & 00 \\
 	\end{array}
 	\]
-
 	This matches the expected modulo-4 counter sequence:
 
 	\[00 \rightarrow 01 \rightarrow 10 \rightarrow 11 \rightarrow 00\]
